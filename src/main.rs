@@ -125,11 +125,15 @@ fn add(todos: &mut Vec<Todo>, title: String, due: Option<String>) {
 }
 
 fn edit(todos: &mut Vec<Todo>, index: usize, title: String, due: Option<String>) {
-    if !title.is_empty() {
-        todos[index].title = title;
+    if index < todos.len() {
+        if !title.is_empty() {
+            todos[index].title = title;
+        }
+        todos[index].due = due;
+        print_todo(todos, Some(index));
+    } else {
+        println!("{}", "Edit what?!".red().bold());
     }
-    todos[index].due = due;
-    print_todo(todos, Some(index));
 }
 
 fn done(todos: &mut Vec<Todo>, picker: TodoPicker) {
@@ -144,26 +148,33 @@ fn done_toggler(todos: &mut Vec<Todo>, picker: TodoPicker, done: bool) {
     let mut changed: Option<usize> = None;
     match picker {
         TodoPicker::Index(index) => {
-            todos[index].done = done;
-            changed = Some(index);
+            if index < todos.len() {
+                changed = Some(index);
+            }
         }
         TodoPicker::Title(title) => {
             for (i, todo) in todos.iter_mut().enumerate() {
                 if todo.title.to_lowercase().starts_with(&title.to_lowercase()) {
-                    todo.done = done;
                     changed = Some(i);
                 }
             }
         }
     }
-    print_todo(&todos, changed);
+    if let Some(i) = changed {
+        todos[i].done = done;
+        print_todo(&todos, changed);
+    } else {
+        println!("{}", "Done what?!".red().bold());
+    }
 }
 
 fn delete(todos: &mut Vec<Todo>, picker: TodoPicker) {
     let mut delete_id: Option<usize> = None;
     match picker {
         TodoPicker::Index(index) => {
-            delete_id = Some(index);
+            if index < todos.len() {
+                delete_id = Some(index);
+            }
         }
         TodoPicker::Title(title) => {
             for (i, todo) in todos.iter_mut().enumerate() {
