@@ -112,6 +112,9 @@ fn print_todo(todos: &Vec<Todo>, highlight: Option<usize>) {
             println!("{}. {}", i, todo);
         }
     }
+    if todos.len() == 0 {
+        println!("{}", "Nothing to do".green().bold());
+    }
 }
 
 fn add(todos: &mut Vec<Todo>, title: String, due: Option<String>) {
